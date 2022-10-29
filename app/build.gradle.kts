@@ -96,7 +96,8 @@ dependencies {
     kapt(libs.hilt.ext.compiler)
     kapt(libs.androidx.room.compiler)
 
-    androidTestImplementation(libs.junit)
+    testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.espresso.core)
