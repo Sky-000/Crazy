@@ -19,6 +19,7 @@ package com.android.crazy.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.crazy.common.network.result.NetworkResult
+import com.android.crazy.common.worker.WorkerManager
 import com.android.crazy.data.Email
 import com.android.crazy.data.EmailsRepository
 import com.android.crazy.data.EmailsRepositoryImpl
@@ -45,8 +46,9 @@ class CrazyHomeViewModel @Inject constructor(
     val uiState: StateFlow<CrazyHomeUIState> = _uiState
 
     init {
+        WorkerManager.instance.createWorker()
         observeEmails()
-        testUser()
+        //testUser()
     }
 
     private fun observeEmails() {

@@ -70,40 +70,26 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
-
     implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-
     implementation(libs.androidx.compose.material3)
     implementation(libs.accompanist.adaptive)
-
     implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.compose.material.iconsExtended)
-
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.navigation.compose)
-
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.window)
-
     implementation(libs.hilt.android)
     implementation(libs.hilt.ext.work)
-
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.datastore.preferences.core)
-
     implementation(libs.androidx.work.runtime.ktx)
-
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.converter.gson)
-
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
-
     implementation(libs.gson)
 
     kapt(libs.hilt.compiler)
@@ -120,5 +106,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
+    debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
