@@ -58,7 +58,10 @@ class MainActivity : ComponentActivity() {
                     },
                     navigateToDetail = { emailId, pane ->
                         viewModel.setSelectedEmail(emailId, pane)
-                    }
+                    },
+                    onSearchQueryChange = { query ->
+                        viewModel.onSearchQueryChange(query)
+                    },
                 )
             }
         }

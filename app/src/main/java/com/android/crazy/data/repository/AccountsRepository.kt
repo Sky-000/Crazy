@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.crazy.data
+package com.android.crazy.data.repository
 
+import com.android.crazy.data.model.Account
 import kotlinx.coroutines.flow.Flow
 
 /**
- * An Interface contract to get all enails info for a User.
+ * An Interface contract to get all accounts info for User.
  */
-interface EmailsRepository {
-    fun getAllEmails(): Flow<List<Email>>
-    fun getCategoryEmails(category: MailboxType): Flow<List<Email>>
-    fun getAllFolders(): List<String>
-    fun getEmailFromId(id: Long): Flow<Email?>
+interface AccountsRepository {
+    fun getDefaultUserAccount(): Flow<Account>
+    fun getAllUserAccounts(): Flow<List<Account>>
+    fun getContactAccountByUid(uid: Long): Flow<Account>
 }

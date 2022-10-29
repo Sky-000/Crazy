@@ -20,9 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.worker.WorkerManager
-import com.android.crazy.data.Email
-import com.android.crazy.data.EmailsRepository
-import com.android.crazy.data.EmailsRepositoryImpl
+import com.android.crazy.data.model.Email
+import com.android.crazy.data.repository.EmailsRepository
+import com.android.crazy.data.repository.EmailsRepositoryImpl
 import com.android.crazy.data.repository.UserRepository
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.utils.Logger
@@ -30,7 +30,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -106,6 +105,27 @@ class CrazyHomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun onSearchQueryChange(query: String) {
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+        viewModelScope.launch {
+            if (query.toIntOrNull() != null) {
+                userRepository.getUserRemote(query.toInt()).collect {
+                    when(it) {
+                        is NetworkResult.Loading -> {
+                            Logger.e(msg = "Loading")
+                        }
+                        is NetworkResult.Success -> {
+                            it.data?.let { user -> Logger.e(msg = "Success $user") }
+                        }
+                        is NetworkResult.Failure -> {
+                            Logger.e(msg = "Failure ${it.errorMessage}")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 data class CrazyHomeUIState(
@@ -113,5 +133,6 @@ data class CrazyHomeUIState(
     val selectedEmail: Email? = null,
     val isDetailOnlyOpen: Boolean = false,
     val loading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val searchQuery: String = ""
 )

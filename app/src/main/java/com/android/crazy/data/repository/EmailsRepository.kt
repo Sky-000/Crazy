@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.crazy.data
+package com.android.crazy.data.repository
+
+import com.android.crazy.data.model.Email
+import com.android.crazy.data.model.MailboxType
+import kotlinx.coroutines.flow.Flow
 
 /**
- * An enum class to define different types of email folders or categories.
+ * An Interface contract to get all enails info for a User.
  */
-enum class MailboxType {
-    INBOX, DRAFTS, SENT, SPAM, TRASH
+interface EmailsRepository {
+    fun getAllEmails(): Flow<List<Email>>
+    fun getCategoryEmails(category: MailboxType): Flow<List<Email>>
+    fun getAllFolders(): List<String>
+    fun getEmailFromId(id: Long): Flow<Email?>
 }

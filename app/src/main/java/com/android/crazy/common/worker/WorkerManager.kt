@@ -15,6 +15,7 @@ class WorkerManager {
         PeriodicWorkRequestBuilder<UserWorker>(60, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
             ).build()
     }

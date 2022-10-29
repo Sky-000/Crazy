@@ -1,7 +1,7 @@
 package com.android.crazy.common.room.dao
 
 import androidx.room.*
-import com.android.crazy.common.room.entity.User
+import com.android.crazy.data.model.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

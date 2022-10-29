@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.crazy.data
-
-import androidx.annotation.DrawableRes
+package com.android.crazy.data.model
 
 /**
- * An object class to define an attachment to email object.
+ * A simple data class to represent an Email.
  */
-data class EmailAttachment(
-    @DrawableRes val resId: Int,
-    val contentDesc: String
+data class Email(
+    val id: Long,
+    val sender: Account,
+    val recipients: List<Account> = emptyList(),
+    val subject: String,
+    val body: String,
+    val attachments: List<EmailAttachment> = emptyList(),
+    var isImportant: Boolean = false,
+    var isStarred: Boolean = false,
+    var mailbox: MailboxType = MailboxType.INBOX,
+    val createdAt: String,
+    val threads: List<Email> = emptyList()
 )

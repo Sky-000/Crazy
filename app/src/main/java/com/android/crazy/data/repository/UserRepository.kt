@@ -6,7 +6,7 @@ import com.android.crazy.common.network.adapter.isSuccess
 import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.network.service.UserService
 import com.android.crazy.common.room.dao.UserDao
-import com.android.crazy.common.room.entity.User
+import com.android.crazy.data.model.User
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 

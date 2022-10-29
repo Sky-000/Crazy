@@ -40,9 +40,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android.crazy.R
-import com.android.crazy.data.Email
+import com.android.crazy.data.model.Email
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReplyEmailThreadItem(
     email: Email,

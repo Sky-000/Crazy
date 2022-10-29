@@ -17,7 +17,7 @@
 package com.android.crazy.data.local
 
 import com.android.crazy.R
-import com.android.crazy.data.Account
+import com.android.crazy.data.model.Account
 
 /**
  * An static data store of [Account]s. This includes both [Account]s owned by the current user and

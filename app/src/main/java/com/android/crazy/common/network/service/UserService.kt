@@ -1,7 +1,7 @@
 package com.android.crazy.common.network.service
 
 import com.android.crazy.common.network.adapter.NetworkResponse
-import com.android.crazy.common.room.entity.User
+import com.android.crazy.data.model.User
 import retrofit2.http.*
 
 interface UserService : BaseService {

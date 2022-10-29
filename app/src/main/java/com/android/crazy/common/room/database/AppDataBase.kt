@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.android.crazy.common.room.converters.DateConverters
 import com.android.crazy.common.room.dao.UserDao
-import com.android.crazy.common.room.entity.User
+import com.android.crazy.data.model.User
 
 /**
  * @author 刘贺贺

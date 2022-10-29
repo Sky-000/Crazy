@@ -17,9 +17,9 @@
 package com.android.crazy.data.local
 
 import com.android.crazy.R
-import com.android.crazy.data.Email
-import com.android.crazy.data.EmailAttachment
-import com.android.crazy.data.MailboxType
+import com.android.crazy.data.model.Email
+import com.android.crazy.data.model.EmailAttachment
+import com.android.crazy.data.model.MailboxType
 
 /**
  * A static data store of [Email]s.

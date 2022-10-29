@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package com.android.crazy.data
+package com.android.crazy.data.repository
 
-import com.android.crazy.data.local.LocalEmailsDataProvider
+import com.android.crazy.data.model.Account
+import com.android.crazy.data.local.LocalAccountsDataProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class EmailsRepositoryImpl : EmailsRepository {
+class AccountsRepositoryImpl : AccountsRepository {
 
-    override fun getAllEmails(): Flow<List<Email>> = flow {
-        emit(LocalEmailsDataProvider.allEmails)
+    override fun getDefaultUserAccount(): Flow<Account> = flow {
+        emit(LocalAccountsDataProvider.getDefaultUserAccount())
     }
 
-    override fun getCategoryEmails(category: MailboxType): Flow<List<Email>> = flow {
-        val categoryEmails = LocalEmailsDataProvider.allEmails.filter { it.mailbox == category }
-        emit(categoryEmails)
+    override fun getAllUserAccounts(): Flow<List<Account>> = flow {
+        emit(LocalAccountsDataProvider.allUserAccounts)
     }
 
-    override fun getAllFolders(): List<String> {
-        return LocalEmailsDataProvider.getAllFolders()
-    }
-
-    override fun getEmailFromId(id: Long): Flow<Email?> = flow {
-        LocalEmailsDataProvider.allEmails.firstOrNull { it.id == id }
+    override fun getContactAccountByUid(uid: Long): Flow<Account> = flow {
+        emit(LocalAccountsDataProvider.getContactAccountByUid(uid))
     }
 }

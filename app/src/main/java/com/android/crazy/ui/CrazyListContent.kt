@@ -18,11 +18,7 @@ package com.android.crazy.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -34,17 +30,19 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.layout.DisplayFeature
 import com.android.crazy.R
-import com.android.crazy.data.Email
-import com.android.crazy.ui.components.EmailDetailAppBar
+import com.android.crazy.data.model.Email
 import com.android.crazy.ui.components.CrazyEmailListItem
-import com.android.crazy.ui.components.ReplyEmailThreadItem
 import com.android.crazy.ui.components.CrazySearchBar
+import com.android.crazy.ui.components.EmailDetailAppBar
+import com.android.crazy.ui.components.ReplyEmailThreadItem
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.ui.utils.CrazyNavigationType
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
@@ -58,6 +56,7 @@ fun CrazyInboxScreen(
     displayFeatures: List<DisplayFeature>,
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, CrazyContentType) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     /**
@@ -75,9 +74,11 @@ fun CrazyInboxScreen(
         TwoPane(
             first = {
                 CrazyEmailList(
+                    crazyHomeUIState = crazyHomeUIState,
                     emails = crazyHomeUIState.emails,
                     emailLazyListState = emailLazyListState,
-                    navigateToDetail = navigateToDetail
+                    navigateToDetail = navigateToDetail,
+                    onSearchQueryChange = onSearchQueryChange,
                 )
             },
             second = {
@@ -96,7 +97,8 @@ fun CrazyInboxScreen(
                 emailLazyListState = emailLazyListState,
                 modifier = Modifier.fillMaxSize(),
                 closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail
+                navigateToDetail = navigateToDetail,
+                onSearchQueryChange = onSearchQueryChange
             )
             // When we have bottom navigation we show FAB at the bottom end.
             if (navigationType == CrazyNavigationType.BOTTOM_NAVIGATION) {
@@ -104,7 +106,8 @@ fun CrazyInboxScreen(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .size(64.dp),
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ) {
@@ -125,7 +128,8 @@ fun CrazySinglePaneContent(
     emailLazyListState: LazyListState,
     modifier: Modifier = Modifier,
     closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, CrazyContentType) -> Unit
+    navigateToDetail: (Long, CrazyContentType) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
 ) {
     if (crazyHomeUIState.selectedEmail != null && crazyHomeUIState.isDetailOnlyOpen) {
         BackHandler {
@@ -136,24 +140,31 @@ fun CrazySinglePaneContent(
         }
     } else {
         CrazyEmailList(
+            crazyHomeUIState = crazyHomeUIState,
             emails = crazyHomeUIState.emails,
             emailLazyListState = emailLazyListState,
             modifier = modifier,
-            navigateToDetail = navigateToDetail
+            navigateToDetail = navigateToDetail,
+            onSearchQueryChange = onSearchQueryChange
         )
     }
 }
 
 @Composable
 fun CrazyEmailList(
+    crazyHomeUIState: CrazyHomeUIState,
     emails: List<Email>,
     emailLazyListState: LazyListState,
     modifier: Modifier = Modifier,
-    navigateToDetail: (Long, CrazyContentType) -> Unit
+    navigateToDetail: (Long, CrazyContentType) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
 ) {
     LazyColumn(modifier = modifier, state = emailLazyListState) {
         item {
-            CrazySearchBar(modifier = Modifier.fillMaxWidth())
+            CrazySearchBar(
+                modifier = Modifier.fillMaxWidth(),
+                value = crazyHomeUIState.searchQuery,
+                onValueChange = { onSearchQueryChange(it) })
         }
         items(items = emails, key = { it.id }) { email ->
             CrazyEmailListItem(email = email) { emailId ->

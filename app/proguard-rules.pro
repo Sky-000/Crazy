@@ -77,5 +77,4 @@
 -keep class com.android.crazy.data.model.** {*;}
 -keepclasseswithmembers class com.android.crazy.common.network.adapter.NetworkResponse {*;}
 -keepclasseswithmembers class * extends com.android.crazy.common.network.adapter.NetworkResponse {*;}
--keepclasseswithmembers class com.android.crazy.common.room.entity.** {*;}
 

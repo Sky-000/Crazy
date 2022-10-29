@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.crazy.data
+package com.android.crazy.data.model
 
-import com.android.crazy.data.Account
-import kotlinx.coroutines.flow.Flow
+import androidx.annotation.DrawableRes
 
 /**
- * An Interface contract to get all accounts info for User.
+ * An object class to define an attachment to email object.
  */
-interface AccountsRepository {
-    fun getDefaultUserAccount(): Flow<Account>
-    fun getAllUserAccounts(): Flow<List<Account>>
-    fun getContactAccountByUid(uid: Long): Flow<Account>
-}
+data class EmailAttachment(
+    @DrawableRes val resId: Int,
+    val contentDesc: String
+)
