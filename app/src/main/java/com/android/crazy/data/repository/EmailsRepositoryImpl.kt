@@ -16,9 +16,9 @@
 
 package com.android.crazy.data.repository
 
+import com.android.crazy.data.local.LocalEmailsDataProvider
 import com.android.crazy.data.model.Email
 import com.android.crazy.data.model.MailboxType
-import com.android.crazy.data.local.LocalEmailsDataProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

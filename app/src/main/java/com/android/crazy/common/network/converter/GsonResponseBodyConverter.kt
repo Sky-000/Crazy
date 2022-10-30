@@ -1,8 +1,8 @@
 package com.android.crazy.common.network.converter
 
+import com.android.crazy.common.network.adapter.NetworkResponse
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.android.crazy.common.network.adapter.NetworkResponse
 import okhttp3.ResponseBody
 import retrofit2.Converter
 

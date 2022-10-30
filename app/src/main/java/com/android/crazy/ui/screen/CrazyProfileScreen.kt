@@ -1,7 +1,10 @@
 package com.android.crazy.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,6 +15,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,6 +33,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.crazy.R
+import com.android.crazy.ui.theme.CrazyTheme
 import com.android.crazy.ui.viewmodel.CrazyProfileUIState
 
 @Composable
@@ -44,7 +49,10 @@ fun CrazyProfileScreen(
 
     ) {
         if (crazyProfileUIState.isLogin && crazyProfileUIState.user != null) {
-            Text(text = "Welcome ${crazyProfileUIState.user.name}")
+            Text(
+                text = "Welcome ${crazyProfileUIState.user.name}",
+                color = MaterialTheme.colorScheme.primary
+            )
         } else {
             CrazyLoginContent(crazyProfileUIState = crazyProfileUIState, login = login)
         }
@@ -58,7 +66,6 @@ fun CrazyLoginContent(
     modifier: Modifier = Modifier,
     login: (String, String) -> Unit,
 ) {
-
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.inverseOnSurface,
@@ -107,42 +114,13 @@ fun CrazyLoginContent(
                 }),
                 visualTransformation = PasswordVisualTransformation(),
             )
-
-            Button(
+            CrazyLoginButton(
+                crazyProfileUIState = crazyProfileUIState,
+                enable = email.value.isNotEmpty() && password.value.isNotEmpty(),
                 onClick = {
                     login(email.value, password.value)
                     keyboardController?.hide()
-                },
-                enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
-                modifier = Modifier
-                    .fillMaxWidth(if (crazyProfileUIState.loading) 0.3f else 1f)
-                    .padding(vertical = 16.dp, horizontal = 16.dp)
-                    .animateContentSize(),
-
-                ) {
-                if (crazyProfileUIState.loading) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(id = R.string.login),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-            AnimatedVisibility(visible = crazyProfileUIState.error != null) {
-                crazyProfileUIState.error?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-            }
+                })
         }
     }
 }
@@ -163,7 +141,7 @@ fun CrazyLoginTextField(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
             .background(MaterialTheme.colorScheme.surface, CircleShape),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -195,46 +173,125 @@ fun CrazyLoginTextField(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun CrazyLoginTextFieldEmailPreview() {
-    val email = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    CrazyLoginTextField(
-        value = email.value,
-        onValueChange = { email.value = it },
-        imageVector = Icons.Default.Email,
-        contentDescription = null,
-        placeholder = stringResource(id = R.string.email),
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Email
+fun CrazyLoginButton(
+    crazyProfileUIState: CrazyProfileUIState,
+    enable: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val transition =
+        updateTransition(targetState = crazyProfileUIState.error != null, label = "shake")
+    val shakeOffset by transition.animateDp(
+        transitionSpec = {
+            if (true isTransitioningTo false) {
+                tween(durationMillis = 100)
+            } else {
+                keyframes {
+                    durationMillis = 500
+                    0.dp at 0
+                    10.dp at 100
+                    (-10).dp at 200
+                    10.dp at 300
+                    (-10).dp at 400
+                    0.dp at 500
+                }
+            }
+        }, label = "shakeOffset"
+    ) { targetState ->
+        if (targetState) 0.dp else 0.dp
+    }
+
+    Button(
+        onClick = { onClick() },
+        enabled = enable,
+        modifier = modifier
+            .fillMaxWidth(if (crazyProfileUIState.loading) 0.3f else 1f)
+            .offset(shakeOffset)
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .animateContentSize(),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp,
+            disabledElevation = 2.dp
         ),
-        keyboardActions = KeyboardActions(onNext = {
-            keyboardController?.hide()
-        })
-    )
+
+        ) {
+        if (crazyProfileUIState.loading) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = crazyProfileUIState.error ?: stringResource(id = R.string.login),
+                color = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
+fun CrazyLoginTextFieldEmailPreview() {
+    CrazyTheme(dynamicColor = false) {
+        val email = remember { mutableStateOf("") }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        CrazyLoginTextField(
+            value = email.value,
+            onValueChange = { email.value = it },
+            imageVector = Icons.Default.Email,
+            contentDescription = null,
+            placeholder = stringResource(id = R.string.email),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Email
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                keyboardController?.hide()
+            })
+        )
+    }
+}
+
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Preview
+@Composable
 fun CrazyLoginTextFieldPasswordPreview() {
-    val password = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    CrazyLoginTextField(
-        value = password.value,
-        onValueChange = { password.value = it },
-        imageVector = Icons.Default.Password,
-        contentDescription = null,
-        placeholder = stringResource(id = R.string.password),
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        keyboardActions = KeyboardActions(onDone = {
-            keyboardController?.hide()
-        })
-    )
+    CrazyTheme(dynamicColor = false) {
+        val password = remember { mutableStateOf("") }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        CrazyLoginTextField(
+            value = password.value,
+            onValueChange = { password.value = it },
+            imageVector = Icons.Default.Password,
+            contentDescription = null,
+            placeholder = stringResource(id = R.string.password),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide()
+            })
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CrazyLoginButtonPreview() {
+    CrazyTheme(dynamicColor = false) {
+        val crazyProfileUIState = remember {
+            mutableStateOf(CrazyProfileUIState())
+        }
+        CrazyLoginButton(
+            crazyProfileUIState = CrazyProfileUIState(),
+            enable = true,
+            onClick = { crazyProfileUIState.value = crazyProfileUIState.value.copy(loading = true) }
+        )
+    }
 }

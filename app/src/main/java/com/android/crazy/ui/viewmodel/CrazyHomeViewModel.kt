@@ -28,7 +28,6 @@ import com.android.crazy.data.repository.UserRepository
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch

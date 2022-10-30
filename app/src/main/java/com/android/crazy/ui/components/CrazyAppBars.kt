@@ -41,39 +41,6 @@ import com.android.crazy.R
 import com.android.crazy.data.model.Email
 import com.android.crazy.ui.theme.CrazyTheme
 
-@Composable
-fun CrazySearchBar(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 24.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
-            .background(MaterialTheme.colorScheme.surface, CircleShape),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = stringResource(id = R.string.search),
-            modifier = Modifier.padding(start = 16.dp),
-            tint = MaterialTheme.colorScheme.outline
-        )
-        Text(
-            text = stringResource(id = R.string.search_replies),
-            modifier = Modifier
-                .weight(1f)
-                .padding(16.dp),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline
-        )
-        CrazyProfileImage(
-            drawableResource = R.drawable.avatar_6,
-            description = stringResource(id = R.string.profile),
-            modifier = Modifier
-                .padding(12.dp)
-                .size(32.dp)
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailDetailAppBar(

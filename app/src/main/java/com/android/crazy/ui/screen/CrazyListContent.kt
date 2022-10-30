@@ -16,6 +16,7 @@
 
 package com.android.crazy.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -172,16 +173,17 @@ fun CrazyEmailList(
         }
     }
 }
-
+@SuppressLint("ModifierParameter")
 @Composable
 fun CrazyEmailDetail(
     email: Email,
     isFullScreen: Boolean = true,
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.inverseOnSurface)
             .padding(top = 16.dp)
     ) {

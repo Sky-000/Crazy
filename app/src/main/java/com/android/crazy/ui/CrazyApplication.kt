@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class CrazyApplication: Application(), Configuration.Provider {
+class CrazyApplication : Application(), Configuration.Provider {
 
     companion object {
         lateinit var appContext: Context
