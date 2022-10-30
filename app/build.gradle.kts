@@ -64,6 +64,13 @@ android {
             excludes += "META-INF/LGPL2.1"
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -91,6 +98,7 @@ dependencies {
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.gson)
+    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
 
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.ext.compiler)

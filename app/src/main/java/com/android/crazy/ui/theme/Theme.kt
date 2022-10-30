@@ -99,11 +99,11 @@ fun CrazyTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = crazyColorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = crazyColorScheme.inverseOnSurface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
             window.navigationBarColor = crazyColorScheme.onPrimary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                darkTheme
+                !darkTheme
         }
     }
 

@@ -7,6 +7,7 @@ import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.network.service.UserService
 import com.android.crazy.common.room.dao.UserDao
 import com.android.crazy.data.model.User
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -110,5 +111,16 @@ class UserRepository @Inject constructor(
     }
 
     fun getUserLocal(id: Int) = dao.getUser(id)
+
+    suspend fun login(email: String, password: String) = flow {
+        emit(NetworkResult.Loading(true))
+        delay(3000L)
+        val result = service.login(User(email = email, password = password))
+        if (result.isSuccess) {
+            emit(NetworkResult.Success(result.getOrNull()))
+        } else {
+            emit(NetworkResult.Failure(result.exceptionOrNull()?.message ?: "未知错误"))
+        }
+    }
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.crazy.ui
+package com.android.crazy.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

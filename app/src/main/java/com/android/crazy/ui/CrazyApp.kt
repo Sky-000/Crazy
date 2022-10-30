@@ -43,7 +43,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.android.crazy.ui.navigation.*
+import com.android.crazy.ui.screen.CrazyInboxScreen
+import com.android.crazy.ui.screen.EmptyComingSoon
+import com.android.crazy.ui.screen.CrazyProfileScreen
 import com.android.crazy.ui.utils.*
+import com.android.crazy.ui.viewmodel.CrazyHomeUIState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,6 +58,7 @@ fun CrazyApp(
     closeDetailScreen: () -> Unit = {},
     navigateToDetail: (Long, CrazyContentType) -> Unit = { _, _ -> },
     onSearchQueryChange: (String) -> Unit = {},
+    login: (String, String) -> Unit = { _, _ -> },
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -132,6 +137,7 @@ fun CrazyApp(
         closeDetailScreen = closeDetailScreen,
         navigateToDetail = navigateToDetail,
         onSearchQueryChange = onSearchQueryChange,
+        login = login,
     )
 }
 
@@ -146,6 +152,7 @@ private fun CrazyNavigationWrapper(
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, CrazyContentType) -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    login: (String, String) -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -179,6 +186,7 @@ private fun CrazyNavigationWrapper(
                 closeDetailScreen = closeDetailScreen,
                 navigateToDetail = navigateToDetail,
                 onSearchQueryChange = onSearchQueryChange,
+                login = login,
             )
         }
     } else {
@@ -209,6 +217,7 @@ private fun CrazyNavigationWrapper(
                 closeDetailScreen = closeDetailScreen,
                 navigateToDetail = navigateToDetail,
                 onSearchQueryChange = onSearchQueryChange,
+                login = login,
             ) {
                 scope.launch {
                     drawerState.open()
@@ -232,6 +241,7 @@ fun CrazyAppContent(
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, CrazyContentType) -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    login: (String, String) -> Unit,
     onDrawerClicked: () -> Unit = {}
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -257,6 +267,7 @@ fun CrazyAppContent(
                 closeDetailScreen = closeDetailScreen,
                 navigateToDetail = navigateToDetail,
                 onSearchQueryChange = onSearchQueryChange,
+                login = login,
                 modifier = Modifier.weight(1f),
             )
             AnimatedVisibility(visible = navigationType == CrazyNavigationType.BOTTOM_NAVIGATION) {
@@ -279,6 +290,7 @@ private fun CrazyNavHost(
     closeDetailScreen: () -> Unit,
     navigateToDetail: (Long, CrazyContentType) -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    login: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -297,14 +309,17 @@ private fun CrazyNavHost(
                 onSearchQueryChange = onSearchQueryChange,
             )
         }
-        composable(CrazyRoute.DM) {
+        composable(CrazyRoute.EXPLORE) {
             EmptyComingSoon()
         }
         composable(CrazyRoute.ARTICLES) {
             EmptyComingSoon()
         }
-        composable(CrazyRoute.GROUPS) {
-            EmptyComingSoon()
+        composable(CrazyRoute.PROFILE) {
+            CrazyProfileScreen(
+                crazyProfileUIState = crazyHomeUIState.crazyProfileUIState,
+                login = login,
+            )
         }
     }
 }

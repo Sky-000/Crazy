@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.crazy.ui
+package com.android.crazy.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.worker.WorkerManager
 import com.android.crazy.data.model.Email
+import com.android.crazy.data.model.User
 import com.android.crazy.data.repository.EmailsRepository
 import com.android.crazy.data.repository.EmailsRepositoryImpl
 import com.android.crazy.data.repository.UserRepository
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.utils.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -40,6 +42,7 @@ class CrazyHomeViewModel @Inject constructor(
     ViewModel() {
 
     private val emailsRepository: EmailsRepository = EmailsRepositoryImpl()
+
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(CrazyHomeUIState(loading = true))
     val uiState: StateFlow<CrazyHomeUIState> = _uiState
@@ -90,7 +93,7 @@ class CrazyHomeViewModel @Inject constructor(
     fun testUser() {
         viewModelScope.launch {
             userRepository.getAllUserRemote().collect {
-                when(it) {
+                when (it) {
                     is NetworkResult.Loading -> {
                         Logger.e(msg = "Loading")
                     }
@@ -111,7 +114,7 @@ class CrazyHomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (query.toIntOrNull() != null) {
                 userRepository.getUserRemote(query.toInt()).collect {
-                    when(it) {
+                    when (it) {
                         is NetworkResult.Loading -> {
                             Logger.e(msg = "Loading")
                         }
@@ -126,6 +129,41 @@ class CrazyHomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(crazyProfileUIState = CrazyProfileUIState())
+            userRepository.login(email, password).collect {
+                when (it) {
+                    is NetworkResult.Loading -> {
+                        _uiState.value =
+                            _uiState.value.copy(crazyProfileUIState = CrazyProfileUIState(loading = true))
+                    }
+                    is NetworkResult.Success -> {
+                        it.data?.let { user ->
+                            _uiState.value =
+                                _uiState.value.copy(
+                                    crazyProfileUIState = CrazyProfileUIState(
+                                        user = user,
+                                        loading = false,
+                                        isLogin = true
+                                    )
+                                )
+                        }
+                    }
+                    is NetworkResult.Failure -> {
+                        _uiState.value =
+                            _uiState.value.copy(
+                                crazyProfileUIState = CrazyProfileUIState(
+                                    error = "Login failed please try again",
+                                    loading = false
+                                )
+                            )
+                    }
+                }
+            }
+        }
+    }
 }
 
 data class CrazyHomeUIState(
@@ -134,5 +172,13 @@ data class CrazyHomeUIState(
     val isDetailOnlyOpen: Boolean = false,
     val loading: Boolean = false,
     val error: String? = null,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val crazyProfileUIState: CrazyProfileUIState = CrazyProfileUIState()
+)
+
+data class CrazyProfileUIState(
+    val loading: Boolean = false,
+    val error: String? = null,
+    val isLogin: Boolean = false,
+    val user: User? = null
 )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.crazy.ui
+package com.android.crazy.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -30,8 +30,6 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,6 +43,7 @@ import com.android.crazy.ui.components.EmailDetailAppBar
 import com.android.crazy.ui.components.ReplyEmailThreadItem
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.ui.utils.CrazyNavigationType
+import com.android.crazy.ui.viewmodel.CrazyHomeUIState
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
 

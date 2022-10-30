@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.android.crazy.data.local.LocalEmailsDataProvider
 import com.android.crazy.ui.theme.CrazyTheme
+import com.android.crazy.ui.viewmodel.CrazyHomeUIState
+import com.android.crazy.ui.viewmodel.CrazyHomeViewModel
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,6 +63,9 @@ class MainActivity : ComponentActivity() {
                     },
                     onSearchQueryChange = { query ->
                         viewModel.onSearchQueryChange(query)
+                    },
+                    login = { email, password ->
+                        viewModel.login(email, password)
                     },
                 )
             }

@@ -5,6 +5,8 @@
     <string name="tab_article">Articles</string>
     <string name="tab_dm">Direct Messages</string>
     <string name="tab_groups">Groups</string>
+    <string name="tab_explore">Explore</string>
+    <string name="tab_profile">Profile</string>
 
     <string name="profile">Profile</string>
     <string name="search">Search</string>
@@ -22,4 +24,9 @@
     <string name="more_options_button">More options</string>
     <string name="messages">Messages</string>
     <string name="four_hours_ago">4 hrs ago</string>
+    <string name="title_activity_profile_screen">ProfileScreen</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="login_title">Login</string>
 </resources>

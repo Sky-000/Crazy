@@ -19,8 +19,8 @@ package com.android.crazy.ui.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -29,8 +29,8 @@ import com.android.crazy.R
 object CrazyRoute {
     const val INBOX = "Inbox"
     const val ARTICLES = "Articles"
-    const val DM = "DirectMessages"
-    const val GROUPS = "Groups"
+    const val EXPLORE = "Explore"
+    const val PROFILE = "Profile"
 }
 
 data class CrazyTopLevelDestination(
@@ -73,16 +73,16 @@ val TOP_LEVEL_DESTINATIONS = listOf(
         iconTextId = R.string.tab_article
     ),
     CrazyTopLevelDestination(
-        route = CrazyRoute.DM,
-        selectedIcon = Icons.Outlined.ChatBubbleOutline,
-        unselectedIcon = Icons.Outlined.ChatBubbleOutline,
-        iconTextId = R.string.tab_inbox
+        route = CrazyRoute.EXPLORE,
+        selectedIcon = Icons.Outlined.Explore,
+        unselectedIcon = Icons.Outlined.Explore,
+        iconTextId = R.string.tab_explore
     ),
     CrazyTopLevelDestination(
-        route = CrazyRoute.GROUPS,
-        selectedIcon = Icons.Default.People,
-        unselectedIcon = Icons.Default.People,
-        iconTextId = R.string.tab_article
+        route = CrazyRoute.PROFILE,
+        selectedIcon = Icons.Outlined.Person,
+        unselectedIcon = Icons.Outlined.Person,
+        iconTextId = R.string.tab_profile
     )
 
 )

@@ -162,6 +162,13 @@ fun CrazyBottomNavigationBar(
                         imageVector = replyDestination.selectedIcon,
                         contentDescription = stringResource(id = replyDestination.iconTextId)
                     )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = replyDestination.iconTextId),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             )
         }
