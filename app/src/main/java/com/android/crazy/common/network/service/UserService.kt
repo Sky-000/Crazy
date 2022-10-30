@@ -1,6 +1,7 @@
 package com.android.crazy.common.network.service
 
 import com.android.crazy.common.network.adapter.NetworkResponse
+import com.android.crazy.data.model.LoginForm
 import com.android.crazy.data.model.User
 import retrofit2.http.*
 
@@ -31,5 +32,5 @@ interface UserService : BaseService {
     suspend fun getUser(@Query("id") id: Int): NetworkResponse<User>
 
     @POST("/user/login")
-    suspend fun login(@Body user: User): NetworkResponse<User>
+    suspend fun login(@Body loginForm: LoginForm): NetworkResponse<User>
 }

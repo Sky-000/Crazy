@@ -6,6 +6,7 @@ import com.android.crazy.common.network.adapter.isSuccess
 import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.network.service.UserService
 import com.android.crazy.common.room.dao.UserDao
+import com.android.crazy.data.model.LoginForm
 import com.android.crazy.data.model.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -115,7 +116,7 @@ class UserRepository @Inject constructor(
     suspend fun login(email: String, password: String) = flow {
         emit(NetworkResult.Loading(true))
         delay(3000L)
-        val result = service.login(User(email = email, password = password))
+        val result = service.login(LoginForm(email, password))
         if (result.isSuccess) {
             emit(NetworkResult.Success(result.getOrNull()))
         } else {

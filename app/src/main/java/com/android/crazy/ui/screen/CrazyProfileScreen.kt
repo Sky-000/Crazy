@@ -215,6 +215,10 @@ fun CrazyLoginButton(
             pressedElevation = 4.dp,
             disabledElevation = 2.dp
         ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            contentColor = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
+        ),
 
         ) {
         if (crazyProfileUIState.loading) {
@@ -226,7 +230,8 @@ fun CrazyLoginButton(
         } else {
             Text(
                 text = crazyProfileUIState.error ?: stringResource(id = R.string.login),
-                color = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary
+                color = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

@@ -20,3 +20,8 @@ data class User(
     val createBy: String = "",
     val updateBy: String = ""
 )
+
+data class LoginForm(
+    val email: String,
+    val password: String
+)
