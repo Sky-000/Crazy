@@ -129,40 +129,6 @@ class CrazyHomeViewModel @Inject constructor(
         }
     }
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(crazyProfileUIState = CrazyProfileUIState())
-            userRepository.login(email, password).collect {
-                when (it) {
-                    is NetworkResult.Loading -> {
-                        _uiState.value =
-                            _uiState.value.copy(crazyProfileUIState = CrazyProfileUIState(loading = true))
-                    }
-                    is NetworkResult.Success -> {
-                        it.data?.let { user ->
-                            _uiState.value =
-                                _uiState.value.copy(
-                                    crazyProfileUIState = CrazyProfileUIState(
-                                        user = user,
-                                        loading = false,
-                                        isLogin = true
-                                    )
-                                )
-                        }
-                    }
-                    is NetworkResult.Failure -> {
-                        _uiState.value =
-                            _uiState.value.copy(
-                                crazyProfileUIState = CrazyProfileUIState(
-                                    error = "Login failed please try again",
-                                    loading = false
-                                )
-                            )
-                    }
-                }
-            }
-        }
-    }
 }
 
 data class CrazyHomeUIState(
@@ -172,12 +138,6 @@ data class CrazyHomeUIState(
     val loading: Boolean = false,
     val error: String? = null,
     val searchQuery: String = "",
-    val crazyProfileUIState: CrazyProfileUIState = CrazyProfileUIState()
 )
 
-data class CrazyProfileUIState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val isLogin: Boolean = false,
-    val user: User? = null
-)
+

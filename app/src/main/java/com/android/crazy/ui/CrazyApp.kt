@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,18 +43,14 @@ import com.android.crazy.ui.screen.CrazyInboxScreen
 import com.android.crazy.ui.screen.CrazyProfileScreen
 import com.android.crazy.ui.screen.EmptyComingSoon
 import com.android.crazy.ui.utils.*
-import com.android.crazy.ui.viewmodel.CrazyHomeUIState
+import com.android.crazy.ui.viewmodel.CrazyHomeViewModel
+import com.android.crazy.ui.viewmodel.CrazyProfileViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun CrazyApp(
     windowSize: WindowSizeClass,
     displayFeatures: List<DisplayFeature>,
-    crazyHomeUIState: CrazyHomeUIState,
-    closeDetailScreen: () -> Unit = {},
-    navigateToDetail: (Long, CrazyContentType) -> Unit = { _, _ -> },
-    onSearchQueryChange: (String) -> Unit = {},
-    login: (String, String) -> Unit = { _, _ -> },
 ) {
     /**
      * This will help us select type of navigation and content type depending on window size and
@@ -128,11 +125,6 @@ fun CrazyApp(
         contentType = contentType,
         displayFeatures = displayFeatures,
         navigationContentPosition = navigationContentPosition,
-        crazyHomeUIState = crazyHomeUIState,
-        closeDetailScreen = closeDetailScreen,
-        navigateToDetail = navigateToDetail,
-        onSearchQueryChange = onSearchQueryChange,
-        login = login,
     )
 }
 
@@ -143,11 +135,6 @@ private fun CrazyNavigationWrapper(
     contentType: CrazyContentType,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: CrazyNavigationContentPosition,
-    crazyHomeUIState: CrazyHomeUIState,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, CrazyContentType) -> Unit,
-    onSearchQueryChange: (String) -> Unit,
-    login: (String, String) -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -174,14 +161,9 @@ private fun CrazyNavigationWrapper(
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                crazyHomeUIState = crazyHomeUIState,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
-                onSearchQueryChange = onSearchQueryChange,
-                login = login,
             )
         }
     } else {
@@ -205,14 +187,9 @@ private fun CrazyNavigationWrapper(
                 contentType = contentType,
                 displayFeatures = displayFeatures,
                 navigationContentPosition = navigationContentPosition,
-                crazyHomeUIState = crazyHomeUIState,
                 navController = navController,
                 selectedDestination = selectedDestination,
                 navigateToTopLevelDestination = navigationActions::navigateTo,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
-                onSearchQueryChange = onSearchQueryChange,
-                login = login,
             ) {
                 scope.launch {
                     drawerState.open()
@@ -229,14 +206,9 @@ fun CrazyAppContent(
     contentType: CrazyContentType,
     displayFeatures: List<DisplayFeature>,
     navigationContentPosition: CrazyNavigationContentPosition,
-    crazyHomeUIState: CrazyHomeUIState,
     navController: NavHostController,
     selectedDestination: String,
     navigateToTopLevelDestination: (CrazyTopLevelDestination) -> Unit,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, CrazyContentType) -> Unit,
-    onSearchQueryChange: (String) -> Unit,
-    login: (String, String) -> Unit,
     onDrawerClicked: () -> Unit = {}
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -257,12 +229,7 @@ fun CrazyAppContent(
                 navController = navController,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
-                crazyHomeUIState = crazyHomeUIState,
                 navigationType = navigationType,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
-                onSearchQueryChange = onSearchQueryChange,
-                login = login,
                 modifier = Modifier.weight(1f),
             )
             AnimatedVisibility(visible = navigationType == CrazyNavigationType.BOTTOM_NAVIGATION) {
@@ -280,12 +247,7 @@ private fun CrazyNavHost(
     navController: NavHostController,
     contentType: CrazyContentType,
     displayFeatures: List<DisplayFeature>,
-    crazyHomeUIState: CrazyHomeUIState,
     navigationType: CrazyNavigationType,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, CrazyContentType) -> Unit,
-    onSearchQueryChange: (String) -> Unit,
-    login: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -294,26 +256,24 @@ private fun CrazyNavHost(
         startDestination = CrazyRoute.INBOX,
     ) {
         composable(CrazyRoute.INBOX) {
+            val homeViewModel = hiltViewModel<CrazyHomeViewModel>()
             CrazyInboxScreen(
+                viewModel = homeViewModel,
                 contentType = contentType,
-                crazyHomeUIState = crazyHomeUIState,
                 navigationType = navigationType,
                 displayFeatures = displayFeatures,
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
-                onSearchQueryChange = onSearchQueryChange,
             )
-        }
-        composable(CrazyRoute.EXPLORE) {
-            EmptyComingSoon()
         }
         composable(CrazyRoute.ARTICLES) {
             EmptyComingSoon()
         }
+        composable(CrazyRoute.EXPLORE) {
+            EmptyComingSoon()
+        }
         composable(CrazyRoute.PROFILE) {
+            val profileViewModel = hiltViewModel<CrazyProfileViewModel>()
             CrazyProfileScreen(
-                crazyProfileUIState = crazyHomeUIState.crazyProfileUIState,
-                login = login,
+                viewModel = profileViewModel,
             )
         }
     }

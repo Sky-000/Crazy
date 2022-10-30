@@ -31,6 +31,8 @@ import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,26 +47,25 @@ import com.android.crazy.ui.components.ReplyEmailThreadItem
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.ui.utils.CrazyNavigationType
 import com.android.crazy.ui.viewmodel.CrazyHomeUIState
+import com.android.crazy.ui.viewmodel.CrazyHomeViewModel
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
 
 @Composable
 fun CrazyInboxScreen(
+    viewModel: CrazyHomeViewModel,
     contentType: CrazyContentType,
-    crazyHomeUIState: CrazyHomeUIState,
     navigationType: CrazyNavigationType,
     displayFeatures: List<DisplayFeature>,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long, CrazyContentType) -> Unit,
-    onSearchQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     /**
      * When moving from LIST_AND_DETAIL page to LIST page clear the selection and user should see LIST screen.
      */
     LaunchedEffect(key1 = contentType) {
-        if (contentType == CrazyContentType.SINGLE_PANE && !crazyHomeUIState.isDetailOnlyOpen) {
-            closeDetailScreen()
+        if (contentType == CrazyContentType.SINGLE_PANE && !uiState.isDetailOnlyOpen) {
+            viewModel.closeDetailScreen()
         }
     }
 
@@ -74,16 +75,20 @@ fun CrazyInboxScreen(
         TwoPane(
             first = {
                 CrazyEmailList(
-                    crazyHomeUIState = crazyHomeUIState,
-                    emails = crazyHomeUIState.emails,
+                    crazyHomeUIState = uiState,
+                    emails = uiState.emails,
                     emailLazyListState = emailLazyListState,
-                    navigateToDetail = navigateToDetail,
-                    onSearchQueryChange = onSearchQueryChange,
+                    navigateToDetail = { emailId, pane ->
+                        viewModel.setSelectedEmail(emailId, pane)
+                    },
+                    onSearchQueryChange = { query ->
+                        viewModel.onSearchQueryChange(query)
+                    },
                 )
             },
             second = {
                 CrazyEmailDetail(
-                    email = crazyHomeUIState.selectedEmail ?: crazyHomeUIState.emails.first(),
+                    email = uiState.selectedEmail ?: uiState.emails.first(),
                     isFullScreen = false
                 )
             },
@@ -93,12 +98,16 @@ fun CrazyInboxScreen(
     } else {
         Box(modifier = modifier.fillMaxSize()) {
             CrazySinglePaneContent(
-                crazyHomeUIState = crazyHomeUIState,
+                crazyHomeUIState = uiState,
                 emailLazyListState = emailLazyListState,
                 modifier = Modifier.fillMaxSize(),
-                closeDetailScreen = closeDetailScreen,
-                navigateToDetail = navigateToDetail,
-                onSearchQueryChange = onSearchQueryChange
+                closeDetailScreen = { viewModel.closeDetailScreen() },
+                navigateToDetail = { emailId, pane ->
+                    viewModel.setSelectedEmail(emailId, pane)
+                },
+                onSearchQueryChange = { query ->
+                    viewModel.onSearchQueryChange(query)
+                },
             )
             // When we have bottom navigation we show FAB at the bottom end.
             if (navigationType == CrazyNavigationType.BOTTOM_NAVIGATION) {
@@ -173,6 +182,7 @@ fun CrazyEmailList(
         }
     }
 }
+
 @SuppressLint("ModifierParameter")
 @Composable
 fun CrazyEmailDetail(

@@ -14,10 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import com.android.crazy.R
 import com.android.crazy.ui.theme.CrazyTheme
 import com.android.crazy.ui.viewmodel.CrazyProfileUIState
+import com.android.crazy.ui.viewmodel.CrazyProfileViewModel
 
 @Composable
 fun CrazyProfileScreen(
-    crazyProfileUIState: CrazyProfileUIState,
-    login: (String, String) -> Unit,
+    viewModel: CrazyProfileViewModel,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -48,13 +45,16 @@ fun CrazyProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        if (crazyProfileUIState.isLogin && crazyProfileUIState.user != null) {
+        val uiState by viewModel.uiState.collectAsState()
+        if (uiState.isLogin && uiState.user != null) {
             Text(
-                text = "Welcome ${crazyProfileUIState.user.name}",
+                text = "Welcome ${uiState.user?.name}",
                 color = MaterialTheme.colorScheme.primary
             )
         } else {
-            CrazyLoginContent(crazyProfileUIState = crazyProfileUIState, login = login)
+            CrazyLoginContent(crazyProfileUIState = uiState, login = { email, password ->
+                viewModel.login(email, password)
+            })
         }
     }
 }
