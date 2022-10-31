@@ -18,8 +18,12 @@ package com.android.crazy.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Article
 import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -63,24 +67,24 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     CrazyTopLevelDestination(
         route = CrazyRoute.INBOX,
         selectedIcon = Icons.Default.Inbox,
-        unselectedIcon = Icons.Default.Inbox,
+        unselectedIcon = Icons.Outlined.Inbox,
         iconTextId = R.string.tab_inbox
     ),
     CrazyTopLevelDestination(
         route = CrazyRoute.ARTICLES,
         selectedIcon = Icons.Default.Article,
-        unselectedIcon = Icons.Default.Article,
+        unselectedIcon = Icons.Outlined.Article,
         iconTextId = R.string.tab_article
     ),
     CrazyTopLevelDestination(
         route = CrazyRoute.EXPLORE,
-        selectedIcon = Icons.Outlined.Explore,
+        selectedIcon = Icons.Default.Explore,
         unselectedIcon = Icons.Outlined.Explore,
         iconTextId = R.string.tab_explore
     ),
     CrazyTopLevelDestination(
         route = CrazyRoute.PROFILE,
-        selectedIcon = Icons.Outlined.Person,
+        selectedIcon = Icons.Default.Person,
         unselectedIcon = Icons.Outlined.Person,
         iconTextId = R.string.tab_profile
     )

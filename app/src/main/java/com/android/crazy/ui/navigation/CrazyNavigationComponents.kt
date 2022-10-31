@@ -90,15 +90,19 @@ fun CrazyNavigationRail(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { replyDestination ->
+                    TOP_LEVEL_DESTINATIONS.forEach { crazyDestination ->
                         NavigationRailItem(
-                            selected = selectedDestination == replyDestination.route,
-                            onClick = { navigateToTopLevelDestination(replyDestination) },
+                            selected = selectedDestination == crazyDestination.route,
+                            onClick = { navigateToTopLevelDestination(crazyDestination) },
                             icon = {
                                 Icon(
-                                    imageVector = replyDestination.selectedIcon,
+                                    imageVector = if (selectedDestination == crazyDestination.route) {
+                                        crazyDestination.selectedIcon
+                                    } else {
+                                        crazyDestination.unselectedIcon
+                                    },
                                     contentDescription = stringResource(
-                                        id = replyDestination.iconTextId
+                                        id = crazyDestination.iconTextId
                                     )
                                 )
                             }
@@ -159,7 +163,11 @@ fun CrazyBottomNavigationBar(
                 onClick = { navigateToTopLevelDestination(replyDestination) },
                 icon = {
                     Icon(
-                        imageVector = replyDestination.selectedIcon,
+                        imageVector = if (selectedDestination == replyDestination.route) {
+                            replyDestination.selectedIcon
+                        } else {
+                            replyDestination.unselectedIcon
+                        },
                         contentDescription = stringResource(id = replyDestination.iconTextId)
                     )
                 },
@@ -232,27 +240,31 @@ fun PermanentNavigationDrawerContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { replyDestination ->
+                    TOP_LEVEL_DESTINATIONS.forEach { crazyDestination ->
                         NavigationDrawerItem(
-                            selected = selectedDestination == replyDestination.route,
+                            selected = selectedDestination == crazyDestination.route,
                             label = {
                                 Text(
-                                    text = stringResource(id = replyDestination.iconTextId),
+                                    text = stringResource(id = crazyDestination.iconTextId),
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             },
                             icon = {
                                 Icon(
-                                    imageVector = replyDestination.selectedIcon,
+                                    imageVector = if (selectedDestination == crazyDestination.route) {
+                                        crazyDestination.selectedIcon
+                                    } else {
+                                        crazyDestination.unselectedIcon
+                                    },
                                     contentDescription = stringResource(
-                                        id = replyDestination.iconTextId
+                                        id = crazyDestination.iconTextId
                                     )
                                 )
                             },
                             colors = NavigationDrawerItemDefaults.colors(
                                 unselectedContainerColor = Color.Transparent
                             ),
-                            onClick = { navigateToTopLevelDestination(replyDestination) }
+                            onClick = { navigateToTopLevelDestination(crazyDestination) }
                         )
                     }
                 }
@@ -362,27 +374,31 @@ fun ModalNavigationDrawerContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    TOP_LEVEL_DESTINATIONS.forEach { replyDestination ->
+                    TOP_LEVEL_DESTINATIONS.forEach { crazyDestination ->
                         NavigationDrawerItem(
-                            selected = selectedDestination == replyDestination.route,
+                            selected = selectedDestination == crazyDestination.route,
                             label = {
                                 Text(
-                                    text = stringResource(id = replyDestination.iconTextId),
+                                    text = stringResource(id = crazyDestination.iconTextId),
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             },
                             icon = {
                                 Icon(
-                                    imageVector = replyDestination.selectedIcon,
+                                    imageVector = if (selectedDestination == crazyDestination.route) {
+                                        crazyDestination.selectedIcon
+                                    } else {
+                                        crazyDestination.unselectedIcon
+                                    },
                                     contentDescription = stringResource(
-                                        id = replyDestination.iconTextId
+                                        id = crazyDestination.iconTextId
                                     )
                                 )
                             },
                             colors = NavigationDrawerItemDefaults.colors(
                                 unselectedContainerColor = Color.Transparent
                             ),
-                            onClick = { navigateToTopLevelDestination(replyDestination) }
+                            onClick = { navigateToTopLevelDestination(crazyDestination) }
                         )
                     }
                 }
