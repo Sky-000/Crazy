@@ -29,32 +29,109 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.window.layout.DisplayFeature
 import com.android.crazy.R
 import com.android.crazy.ui.theme.CrazyTheme
+import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.ui.viewmodel.CrazyProfileUIState
 import com.android.crazy.ui.viewmodel.CrazyProfileViewModel
+import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
+import com.google.accompanist.adaptive.TwoPane
 
 @Composable
 fun CrazyProfileScreen(
     viewModel: CrazyProfileViewModel,
-    modifier: Modifier = Modifier,
+    contentType: CrazyContentType,
+    displayFeatures: List<DisplayFeature>,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    val uiState by viewModel.uiState.collectAsState()
 
-    ) {
-        val uiState by viewModel.uiState.collectAsState()
+    if (contentType == CrazyContentType.DUAL_PANE) {
+        TwoPane(
+            first = {
+                if (uiState.isLogin && uiState.user != null) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(
+                            onClick = { viewModel.logout() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                        ) {
+                            Text(text = stringResource(id = R.string.logout))
+                        }
+                    }
+                } else {
+                    CrazyLoginContent(
+                        uiState = uiState,
+                        login = {
+                            viewModel.login()
+                        },
+                        onEmailChange = { email ->
+                            viewModel.onEmailChange(email)
+                        },
+                        onPasswordChange = { password ->
+                            viewModel.onPasswordChange(password)
+                        })
+                }
+            },
+            second = {
+                Column(
+                    modifier = modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Welcome to Crazy App",
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    if (uiState.isLogin && uiState.user != null) {
+                        Text(
+                            text = "Welcome ${uiState.user?.name}",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            },
+            strategy = HorizontalTwoPaneStrategy(splitFraction = 0.5f, gapWidth = 16.dp),
+            displayFeatures = displayFeatures
+        )
+    } else {
         if (uiState.isLogin && uiState.user != null) {
-            Text(
-                text = "Welcome ${uiState.user?.name}",
-                color = MaterialTheme.colorScheme.primary
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Welcome ${uiState.user?.name}",
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Button(
+                    onClick = { viewModel.logout() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                ) {
+                    Text(text = stringResource(id = R.string.logout))
+                }
+            }
         } else {
-            CrazyLoginContent(crazyProfileUIState = uiState, login = { email, password ->
-                viewModel.login(email, password)
-            })
+            CrazyLoginContent(
+                uiState = uiState,
+                login = {
+                    viewModel.login()
+                },
+                onEmailChange = { email ->
+                    viewModel.onEmailChange(email)
+                },
+                onPasswordChange = { password ->
+                    viewModel.onPasswordChange(password)
+                })
         }
     }
 }
@@ -62,66 +139,63 @@ fun CrazyProfileScreen(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CrazyLoginContent(
-    crazyProfileUIState: CrazyProfileUIState,
+    uiState: CrazyProfileUIState,
     modifier: Modifier = Modifier,
-    login: (String, String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    login: () -> Unit,
 ) {
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.inverseOnSurface,
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val localFocusManager = LocalFocusManager.current
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(vertical = 8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val email = remember { mutableStateOf("15252114322@163.com") }
-        val password = remember { mutableStateOf("wcnm741741..") }
-        val keyboardController = LocalSoftwareKeyboardController.current
-        val localFocusManager = LocalFocusManager.current
-        Column(
-            modifier = Modifier.padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.login_title),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 32.dp),
-            )
-            CrazyLoginTextField(
-                value = email.value,
-                onValueChange = { email.value = it },
-                imageVector = Icons.Default.Email,
-                contentDescription = null,
-                placeholder = stringResource(id = R.string.email),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Email
-                ),
-                keyboardActions = KeyboardActions(onNext = {
-                    localFocusManager.moveFocus(focusDirection = FocusDirection.Down)
-                })
-            )
-            CrazyLoginTextField(
-                value = password.value,
-                onValueChange = { password.value = it },
-                imageVector = Icons.Default.Password,
-                contentDescription = null,
-                placeholder = stringResource(id = R.string.password),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Password
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    keyboardController?.hide()
-                    login(email.value, password.value)
-                }),
-                visualTransformation = PasswordVisualTransformation(),
-            )
-            CrazyLoginButton(
-                crazyProfileUIState = crazyProfileUIState,
-                enable = email.value.isNotEmpty() && password.value.isNotEmpty(),
-                onClick = {
-                    login(email.value, password.value)
-                    keyboardController?.hide()
-                })
-        }
+        Text(
+            text = stringResource(id = R.string.login_title),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 32.dp),
+        )
+        CrazyLoginTextField(
+            value = uiState.loginForm.email,
+            onValueChange = { onEmailChange(it) },
+            imageVector = Icons.Default.Email,
+            contentDescription = null,
+            placeholder = stringResource(id = R.string.email),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Email
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                localFocusManager.moveFocus(focusDirection = FocusDirection.Down)
+            })
+        )
+        CrazyLoginTextField(
+            value = uiState.loginForm.password,
+            onValueChange = { onPasswordChange(it) },
+            imageVector = Icons.Default.Password,
+            contentDescription = null,
+            placeholder = stringResource(id = R.string.password),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Password
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide()
+                login()
+            }),
+            visualTransformation = PasswordVisualTransformation(),
+        )
+        CrazyLoginButton(
+            uiState = uiState,
+            enable = uiState.loginForm.email.isNotEmpty() && uiState.loginForm.password.isNotEmpty(),
+            onClick = {
+                login()
+                keyboardController?.hide()
+            })
     }
 }
 
@@ -175,13 +249,13 @@ fun CrazyLoginTextField(
 
 @Composable
 fun CrazyLoginButton(
-    crazyProfileUIState: CrazyProfileUIState,
+    uiState: CrazyProfileUIState,
     enable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val transition =
-        updateTransition(targetState = crazyProfileUIState.error != null, label = "shake")
+        updateTransition(targetState = uiState.error != null, label = "shake")
     val shakeOffset by transition.animateDp(
         transitionSpec = {
             if (true isTransitioningTo false) {
@@ -206,9 +280,9 @@ fun CrazyLoginButton(
         onClick = { onClick() },
         enabled = enable,
         modifier = modifier
-            .fillMaxWidth(if (crazyProfileUIState.loading) 0.3f else 1f)
+            .fillMaxWidth(if (uiState.loading) 0.3f else 1f)
             .offset(shakeOffset)
-            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .padding(vertical = 8.dp, horizontal = 16.dp)
             .animateContentSize(),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 2.dp,
@@ -216,12 +290,12 @@ fun CrazyLoginButton(
             disabledElevation = 2.dp
         ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            contentColor = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
+            containerColor = if (uiState.error != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            contentColor = if (uiState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
         ),
 
         ) {
-        if (crazyProfileUIState.loading) {
+        if (uiState.loading) {
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(24.dp),
@@ -229,8 +303,8 @@ fun CrazyLoginButton(
             )
         } else {
             Text(
-                text = crazyProfileUIState.error ?: stringResource(id = R.string.login),
-                color = if (crazyProfileUIState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
+                text = uiState.error ?: stringResource(id = R.string.login),
+                color = if (uiState.error != null) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -294,7 +368,7 @@ fun CrazyLoginButtonPreview() {
             mutableStateOf(CrazyProfileUIState())
         }
         CrazyLoginButton(
-            crazyProfileUIState = CrazyProfileUIState(),
+            uiState = CrazyProfileUIState(),
             enable = true,
             onClick = { crazyProfileUIState.value = crazyProfileUIState.value.copy(loading = true) }
         )

@@ -274,6 +274,8 @@ private fun CrazyNavHost(
             val profileViewModel = hiltViewModel<CrazyProfileViewModel>()
             CrazyProfileScreen(
                 viewModel = profileViewModel,
+                contentType = contentType,
+                displayFeatures = displayFeatures,
             )
         }
     }

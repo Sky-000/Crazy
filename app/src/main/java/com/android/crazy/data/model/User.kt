@@ -22,6 +22,6 @@ data class User(
 )
 
 data class LoginForm(
-    val email: String,
-    val password: String
+    val email: String = "",
+    val password: String = ""
 )

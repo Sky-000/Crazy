@@ -113,10 +113,10 @@ class UserRepository @Inject constructor(
 
     fun getUserLocal(id: Int) = dao.getUser(id)
 
-    suspend fun login(email: String, password: String) = flow {
+    suspend fun login(loginForm: LoginForm) = flow {
         emit(NetworkResult.Loading(true))
         delay(3000L)
-        val result = service.login(LoginForm(email, password))
+        val result = service.login(loginForm)
         if (result.isSuccess) {
             emit(NetworkResult.Success(result.getOrNull()))
         } else {
