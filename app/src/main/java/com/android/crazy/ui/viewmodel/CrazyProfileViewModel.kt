@@ -7,6 +7,7 @@ import com.android.crazy.data.model.LoginForm
 import com.android.crazy.data.model.User
 import com.android.crazy.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +17,14 @@ import javax.inject.Inject
 class CrazyProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(CrazyProfileUIState(loginForm = LoginForm(email = "15252114322@163.com", password = "wcnm741741..")))
+    private val _uiState = MutableStateFlow(
+        CrazyProfileUIState(
+            loginForm = LoginForm(
+                email = "15252114322@163.com",
+                password = "wcnm741741.."
+            )
+        )
+    )
     val uiState: StateFlow<CrazyProfileUIState> = _uiState
 
     fun login() {
@@ -37,6 +45,7 @@ class CrazyProfileViewModel @Inject constructor(
                                 )
 
                         }
+                        navigateToProfile()
                     }
                     is NetworkResult.Failure -> {
                         _uiState.value =
@@ -65,7 +74,30 @@ class CrazyProfileViewModel @Inject constructor(
     }
 
     fun logout() {
-        _uiState.value = CrazyProfileUIState(loginForm = LoginForm(email = "15252114322@163.com", password = "wcnm741741.."))
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                loading = true
+            )
+            delay(1000L)
+            _uiState.value = CrazyProfileUIState(
+                loginForm = LoginForm(
+                    email = "15252114322@163.com",
+                    password = "wcnm741741.."
+                )
+            )
+        }
+    }
+
+    fun navigateToLogin() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.LOGIN)
+    }
+
+    fun navigateToSetting() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.SETTING)
+    }
+
+    fun navigateToProfile() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.PROFILE)
     }
 }
 
@@ -74,5 +106,10 @@ data class CrazyProfileUIState(
     val error: String? = null,
     val isLogin: Boolean = false,
     val user: User? = null,
-    val loginForm: LoginForm = LoginForm()
+    val loginForm: LoginForm = LoginForm(),
+    val page: CrazyProfilePage = CrazyProfilePage.PROFILE
 )
+
+enum class CrazyProfilePage {
+    PROFILE, SETTING, LOGIN
+}

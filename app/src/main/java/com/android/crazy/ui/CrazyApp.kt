@@ -17,6 +17,7 @@
 package com.android.crazy.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,10 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.android.crazy.ui.navigation.*
@@ -45,6 +43,9 @@ import com.android.crazy.ui.screen.EmptyComingSoon
 import com.android.crazy.ui.utils.*
 import com.android.crazy.ui.viewmodel.CrazyHomeViewModel
 import com.android.crazy.ui.viewmodel.CrazyProfileViewModel
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
 @Composable
@@ -128,7 +129,7 @@ fun CrazyApp(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 private fun CrazyNavigationWrapper(
     navigationType: CrazyNavigationType,
@@ -139,7 +140,7 @@ private fun CrazyNavigationWrapper(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
     val navigationActions = remember(navController) {
         CrazyNavigationActions(navController)
     }
@@ -242,6 +243,7 @@ fun CrazyAppContent(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun CrazyNavHost(
     navController: NavHostController,
@@ -250,7 +252,7 @@ private fun CrazyNavHost(
     navigationType: CrazyNavigationType,
     modifier: Modifier = Modifier,
 ) {
-    NavHost(
+    AnimatedNavHost(
         modifier = modifier,
         navController = navController,
         startDestination = CrazyRoute.INBOX,

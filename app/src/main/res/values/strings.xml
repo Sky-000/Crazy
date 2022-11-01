@@ -30,4 +30,6 @@
     <string name="login">Login</string>
     <string name="login_title">Login</string>
     <string name="logout">Logout</string>
+    <string name="user_setting">用户设置</string>
+    <string name="phone">Phone</string>
 </resources>

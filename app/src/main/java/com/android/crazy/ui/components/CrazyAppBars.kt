@@ -16,6 +16,7 @@
 
 package com.android.crazy.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -105,6 +106,67 @@ fun EmailDetailAppBar(
     )
 }
 
+@SuppressLint("ModifierParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CrazyAppBar(
+    title: String? = null,
+    isFullScreen: Boolean = false,
+    onBackPressed: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        modifier = modifier,
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.inverseOnSurface
+        ),
+        title = {
+            title?.let {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = if (isFullScreen) Alignment.CenterHorizontally
+                    else Alignment.Start
+                ) {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            if (isFullScreen) {
+                FilledIconButton(
+                    onClick = onBackPressed,
+                    modifier = Modifier.padding(8.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.back_button),
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = { /*TODO*/ },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = stringResource(id = R.string.more_options_button),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CrazySearchBar(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
@@ -143,7 +205,7 @@ fun CrazySearchBar(modifier: Modifier = Modifier, value: String, onValueChange: 
 
         )
         CrazyProfileImage(
-            drawableResource = R.drawable.avatar_6,
+            url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg2.doubanio.com%2Fview%2Fphoto%2Fsqs%2Fpublic%2Fp2677102402.jpg&refer=http%3A%2F%2Fimg2.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1669874894&t=6ad60b5e5f5de864f682c53ddc03ed3a",
             description = stringResource(id = R.string.profile),
             modifier = Modifier
                 .padding(12.dp)

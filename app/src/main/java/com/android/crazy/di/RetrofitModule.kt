@@ -1,5 +1,6 @@
 package com.android.crazy.di
 
+import com.android.crazy.BuildConfig
 import com.android.crazy.common.network.adapter.ErrorHandler
 import com.android.crazy.common.network.adapter.NetworkResponseAdapterFactory
 import com.android.crazy.common.network.converter.GsonConverterFactory
@@ -21,9 +22,12 @@ object RetrofitModule {
 
     @Singleton
     @Provides
-    fun getOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun getOkHttpClient() = if (BuildConfig.DEBUG) {
+        OkHttpClient.Builder()
             .addInterceptor(logInterceptor)
+            .build()
+    } else {
+        OkHttpClient.Builder()
             .build()
     }
 
