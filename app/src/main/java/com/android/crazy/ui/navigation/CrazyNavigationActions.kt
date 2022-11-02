@@ -17,22 +17,16 @@
 package com.android.crazy.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Inbox
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Article
-import androidx.compose.material.icons.outlined.Explore
-import androidx.compose.material.icons.outlined.Inbox
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.android.crazy.R
 
 object CrazyRoute {
+    const val HOME = "Home"
     const val INBOX = "Inbox"
-    const val ARTICLES = "Articles"
     const val EXPLORE = "Explore"
     const val PROFILE = "Profile"
 }
@@ -65,16 +59,16 @@ class CrazyNavigationActions(private val navController: NavHostController) {
 
 val TOP_LEVEL_DESTINATIONS = listOf(
     CrazyTopLevelDestination(
+        route = CrazyRoute.HOME,
+        selectedIcon = Icons.Default.Home,
+        unselectedIcon = Icons.Outlined.Home,
+        iconTextId = R.string.tab_home
+    ),
+    CrazyTopLevelDestination(
         route = CrazyRoute.INBOX,
         selectedIcon = Icons.Default.Inbox,
         unselectedIcon = Icons.Outlined.Inbox,
         iconTextId = R.string.tab_inbox
-    ),
-    CrazyTopLevelDestination(
-        route = CrazyRoute.ARTICLES,
-        selectedIcon = Icons.Default.Article,
-        unselectedIcon = Icons.Outlined.Article,
-        iconTextId = R.string.tab_article
     ),
     CrazyTopLevelDestination(
         route = CrazyRoute.EXPLORE,

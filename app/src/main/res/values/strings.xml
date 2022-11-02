@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">Crazy</string>
+    <string name="app_description">This is an Android app based on Jetpack Compose</string>
     <string name="navigation_drawer">Navigation Drawer</string>
+    <string name="tab_home">Home</string>
     <string name="tab_inbox">Inbox</string>
-    <string name="tab_article">Articles</string>
-    <string name="tab_dm">Direct Messages</string>
-    <string name="tab_groups">Groups</string>
     <string name="tab_explore">Explore</string>
     <string name="tab_profile">Profile</string>
 
@@ -27,9 +26,15 @@
     <string name="title_activity_profile_screen">ProfileScreen</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="placeholder_email">please input your email</string>
+    <string name="placeholder_password">please input your password</string>
     <string name="login">Login</string>
     <string name="login_title">Login</string>
     <string name="logout">Logout</string>
     <string name="user_setting">用户设置</string>
     <string name="phone">Phone</string>
+    <string name="about">About</string>
+    <string name="setting">Setting</string>
+    <string name="register">Register</string>
+
 </resources>

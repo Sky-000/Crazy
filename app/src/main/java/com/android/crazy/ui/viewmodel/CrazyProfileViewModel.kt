@@ -27,6 +27,16 @@ class CrazyProfileViewModel @Inject constructor(
     )
     val uiState: StateFlow<CrazyProfileUIState> = _uiState
 
+    init {
+        viewModelScope.launch {
+            userRepository.getAllUserLocal().collect {
+                if (it.isNotEmpty()) {
+                    _uiState.value = _uiState.value.copy(user = it.firstOrNull())
+                }
+            }
+        }
+    }
+
     fun login() {
         viewModelScope.launch {
             userRepository.login(uiState.value.loginForm).collect {
@@ -41,9 +51,8 @@ class CrazyProfileViewModel @Inject constructor(
                                 _uiState.value.copy(
                                     user = user,
                                     loading = false,
-                                    isLogin = true
                                 )
-
+                            userRepository.insertUserLocal(user)
                         }
                         navigateToProfile()
                     }
@@ -79,37 +88,47 @@ class CrazyProfileViewModel @Inject constructor(
                 loading = true
             )
             delay(1000L)
-            _uiState.value = CrazyProfileUIState(
-                loginForm = LoginForm(
-                    email = "15252114322@163.com",
-                    password = "wcnm741741.."
+            _uiState.value.user?.let {
+                userRepository.deleteUserLocal(it)
+                _uiState.value = _uiState.value.copy(
+                    user = null,
+                    loading = false
                 )
-            )
+            }
+            navigateToProfile()
         }
+    }
+    fun navigateToProfile() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.PROFILE)
+    }
+
+    fun navigateToUserSettings() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.USER_SETTINGS)
     }
 
     fun navigateToLogin() {
         _uiState.value = _uiState.value.copy(page = CrazyProfilePage.LOGIN)
     }
 
-    fun navigateToSetting() {
-        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.SETTING)
+    fun navigateToAbout() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.ABOUT)
     }
 
-    fun navigateToProfile() {
-        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.PROFILE)
+    fun navigateToSettings() {
+        _uiState.value = _uiState.value.copy(page = CrazyProfilePage.SETTINGS)
     }
+
+
 }
 
 data class CrazyProfileUIState(
     val loading: Boolean = false,
     val error: String? = null,
-    val isLogin: Boolean = false,
     val user: User? = null,
     val loginForm: LoginForm = LoginForm(),
     val page: CrazyProfilePage = CrazyProfilePage.PROFILE
 )
 
 enum class CrazyProfilePage {
-    PROFILE, SETTING, LOGIN
+    PROFILE, USER_SETTINGS, LOGIN, ABOUT, SETTINGS
 }

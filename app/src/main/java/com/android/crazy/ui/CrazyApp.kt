@@ -37,7 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import com.android.crazy.ui.navigation.*
-import com.android.crazy.ui.screen.CrazyInboxScreen
+import com.android.crazy.ui.screen.CrazyHomeScreen
 import com.android.crazy.ui.screen.CrazyProfileScreen
 import com.android.crazy.ui.screen.EmptyComingSoon
 import com.android.crazy.ui.utils.*
@@ -255,18 +255,18 @@ private fun CrazyNavHost(
     AnimatedNavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = CrazyRoute.INBOX,
+        startDestination = CrazyRoute.HOME,
     ) {
-        composable(CrazyRoute.INBOX) {
+        composable(CrazyRoute.HOME) {
             val homeViewModel = hiltViewModel<CrazyHomeViewModel>()
-            CrazyInboxScreen(
+            CrazyHomeScreen(
                 viewModel = homeViewModel,
                 contentType = contentType,
                 navigationType = navigationType,
                 displayFeatures = displayFeatures,
             )
         }
-        composable(CrazyRoute.ARTICLES) {
+        composable(CrazyRoute.INBOX) {
             EmptyComingSoon()
         }
         composable(CrazyRoute.EXPLORE) {
@@ -278,6 +278,7 @@ private fun CrazyNavHost(
                 viewModel = profileViewModel,
                 contentType = contentType,
                 displayFeatures = displayFeatures,
+                navController = navController,
             )
         }
     }

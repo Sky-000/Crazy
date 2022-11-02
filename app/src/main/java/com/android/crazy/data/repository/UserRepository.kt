@@ -115,7 +115,7 @@ class UserRepository @Inject constructor(
 
     suspend fun login(loginForm: LoginForm) = flow {
         emit(NetworkResult.Loading(true))
-        delay(3000L)
+        delay(1000L)
         val result = service.login(loginForm)
         if (result.isSuccess) {
             emit(NetworkResult.Success(result.getOrNull()))

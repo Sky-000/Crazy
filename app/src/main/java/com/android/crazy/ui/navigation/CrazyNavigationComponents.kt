@@ -154,8 +154,9 @@ fun CrazyBottomNavigationBar(
     navigateToTopLevelDestination: (CrazyTopLevelDestination) -> Unit
 ) {
     NavigationBar(
-        modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        modifier = Modifier
+            .fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.secondaryContainer
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { replyDestination ->
             NavigationBarItem(
@@ -168,19 +169,18 @@ fun CrazyBottomNavigationBar(
                         } else {
                             replyDestination.unselectedIcon
                         },
-                        contentDescription = stringResource(id = replyDestination.iconTextId)
+                        contentDescription = stringResource(id = replyDestination.iconTextId),
                     )
                 },
                 label = {
                     Text(
                         text = stringResource(id = replyDestination.iconTextId),
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 },
-                colors =  NavigationBarItemDefaults.colors(
+                colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
                 )
             )
         }

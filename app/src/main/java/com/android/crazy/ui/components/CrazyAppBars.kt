@@ -167,6 +167,38 @@ fun CrazyAppBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("ModifierParameter")
+@Composable
+fun CrazyBackAppBar(
+    onBackPressed: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        modifier = modifier,
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.inverseOnSurface
+        ),
+        title = {},
+        navigationIcon = {
+            FilledIconButton(
+                onClick = onBackPressed,
+                modifier = Modifier.padding(8.dp),
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = stringResource(id = R.string.back_button),
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+        }
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CrazySearchBar(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {

@@ -52,7 +52,7 @@ import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
 
 @Composable
-fun CrazyInboxScreen(
+fun CrazyHomeScreen(
     viewModel: CrazyHomeViewModel,
     contentType: CrazyContentType,
     navigationType: CrazyNavigationType,
