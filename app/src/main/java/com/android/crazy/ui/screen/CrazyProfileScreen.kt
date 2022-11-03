@@ -1,11 +1,8 @@
 package com.android.crazy.ui.screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,129 +19,127 @@ import com.google.accompanist.adaptive.TwoPane
 
 @Composable
 fun CrazyProfileScreen(
-    viewModel: CrazyProfileViewModel,
     contentType: CrazyContentType,
     displayFeatures: List<DisplayFeature>,
+    modifier: Modifier = Modifier,
     navController: NavController,
-    modifier: Modifier = Modifier
+    viewModel: CrazyProfileViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    BackHandler {
-        when (uiState.page) {
-            CrazyProfilePage.LOGIN -> {
-                viewModel.navigateToUserSettings()
-            }
-            CrazyProfilePage.USER_SETTINGS -> {
-                viewModel.navigateToProfile()
-            }
-            CrazyProfilePage.PROFILE -> {
-                navController.navigateUp()
-            }
-            CrazyProfilePage.ABOUT -> {
-                viewModel.navigateToProfile()
-            }
-            CrazyProfilePage.SETTINGS -> {
-                viewModel.navigateToProfile()
-            }
-        }
-    }
 
     if (contentType == CrazyContentType.DUAL_PANE) {
         TwoPane(
             first = {
-                CrazyProfileContent(uiState = uiState, modifier = modifier)
+                CrazyProfileContent(
+                    modifier = modifier,
+                    navController = navController,
+                    uiState = uiState,
+                )
             },
             second = {
-                AnimatedVisibility(
-                    visible = uiState.page == CrazyProfilePage.PROFILE || uiState.page == CrazyProfilePage.USER_SETTINGS,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
+                DisplayPageWithAnimation(visible = uiState.page == CrazyProfilePage.PROFILE || uiState.page == CrazyProfilePage.USER_SETTINGS) {
                     CrazyUserSettings(
-                        uiState = uiState,
                         logout = { viewModel.logout() },
+                        modifyUser = { viewModel.modifyUser(it) },
                         navigateToLogin = { viewModel.navigateToLogin() },
-                        modifier = modifier.padding(top = 32.dp)
+                        onBackPress = { viewModel.navigateToProfile() },
+                        user = uiState.user,
+                        loading = uiState.loading,
                     )
                 }
-                AnimatedVisibility(
-                    visible = uiState.page == CrazyProfilePage.LOGIN,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Column {
-                        CrazyBackAppBar(
-                            onBackPressed = { viewModel.navigateToProfile() })
-                        CrazyLoginContent(
-                            uiState = uiState,
-                            onEmailChange = { viewModel.onEmailChange(it) },
-                            onPasswordChange = { viewModel.onPasswordChange(it) },
-                            login = { viewModel.login() },
-                        )
-                    }
+
+                DisplayPageWithAnimation(visible = uiState.page == CrazyProfilePage.LOGIN) {
+                    CrazyLoginContent(
+                        login = { viewModel.login() },
+                        onBackPressed = { viewModel.navigateToUserSettings() },
+                        onEmailChange = { viewModel.onEmailChange(it) },
+                        onPasswordChange = { viewModel.onPasswordChange(it) },
+                        uiState = uiState,
+                    )
                 }
+
+                DisplayPageWithAnimation(visible = uiState.page == CrazyProfilePage.SETTINGS) {
+                    CrazyAboutContent(onBackPressed = { viewModel.navigateToProfile() })
+                }
+
+                DisplayPageWithAnimation(visible = uiState.page == CrazyProfilePage.ABOUT) {
+                    CrazyAboutContent(onBackPressed = { viewModel.navigateToProfile() })
+                }
+
+                DisplayPageWithAnimation(visible = uiState.page == CrazyProfilePage.MODIFY) {
+                    CrazyModifyContent(
+                        onBackPressed = viewModel::navigateToUserSettings,
+                        onDone = { uiState.modifyState.onDone(it) },
+                        title = uiState.modifyState.title,
+                        value = uiState.modifyState.value,
+                        loading = uiState.loading,
+                    )
+                }
+
             },
             strategy = HorizontalTwoPaneStrategy(splitFraction = 0.5f, gapWidth = 16.dp),
             displayFeatures = displayFeatures
         )
     } else {
-        AnimatedVisibility(
-            visible = uiState.page == CrazyProfilePage.PROFILE,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.PROFILE) {
             CrazyProfileContent(
-                uiState = uiState,
                 modifier = modifier,
-                onUserCardClick = { viewModel.navigateToUserSettings() },
+                navController = navController,
                 onAboutClick = { viewModel.navigateToAbout() },
-                onSettingsClick = { viewModel.navigateToSettings() })
+                onSettingsClick = { viewModel.navigateToSettings() },
+                onUserCardClick = { viewModel.navigateToUserSettings() },
+                uiState = uiState,
+            )
         }
-        AnimatedVisibility(
-            visible = uiState.page == CrazyProfilePage.USER_SETTINGS,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Column {
-                CrazyBackAppBar(
-                    onBackPressed = { viewModel.navigateToProfile() })
-                CrazyUserSettings(
-                    uiState = uiState,
-                    logout = { viewModel.logout() },
-                    navigateToLogin = { viewModel.navigateToLogin() })
-            }
-        }
-        AnimatedVisibility(
-            visible = uiState.page == CrazyProfilePage.LOGIN,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Column {
-                CrazyBackAppBar(
-                    onBackPressed = { viewModel.navigateToUserSettings() })
-                CrazyLoginContent(
-                    uiState = uiState,
-                    onEmailChange = { viewModel.onEmailChange(it) },
-                    onPasswordChange = { viewModel.onPasswordChange(it) },
-                    login = { viewModel.login() },
-                )
-            }
-        }
-        AnimatedVisibility(
-            visible = uiState.page == CrazyProfilePage.SETTINGS,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
+
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.USER_SETTINGS) {
+            CrazyUserSettings(
+                logout = { viewModel.logout() },
+                modifyUser = { viewModel.modifyUser(it) },
+                navigateToLogin = { viewModel.navigateToLogin() },
+                onBackPress = { viewModel.navigateToProfile() },
+                user = uiState.user,
+                loading = uiState.loading,
+            )
 
         }
-        AnimatedVisibility(
-            visible = uiState.page == CrazyProfilePage.ABOUT,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            CrazyAboutContent()
+
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.LOGIN) {
+            CrazyLoginContent(
+                login = { viewModel.login() },
+                onBackPressed = { viewModel.navigateToUserSettings() },
+                onEmailChange = { viewModel.onEmailChange(it) },
+                onPasswordChange = { viewModel.onPasswordChange(it) },
+                uiState = uiState,
+            )
+        }
+
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.SETTINGS) {
+            CrazyAboutContent(onBackPressed = { viewModel.navigateToProfile() })
+        }
+
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.ABOUT) {
+            CrazyAboutContent(onBackPressed = { viewModel.navigateToProfile() })
+        }
+
+        DisplayPageWithAnimation(uiState.page == CrazyProfilePage.MODIFY) {
+            CrazyModifyContent(
+                onBackPressed = viewModel::navigateToUserSettings,
+                onDone = { uiState.modifyState.onDone(it) },
+                title = uiState.modifyState.title,
+                value = uiState.modifyState.value,
+                loading = uiState.loading,
+            )
         }
     }
 }
 
+@Composable
+fun DisplayPageWithAnimation(
+    visible: Boolean,
+    screen: @Composable () -> Unit,
+) {
+    AnimatedVisibility(visible = visible, enter = expandVertically(), exit = shrinkVertically()) {
+        screen()
+    }
+}

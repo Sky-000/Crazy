@@ -1,5 +1,6 @@
 package com.android.crazy.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -25,9 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,25 +39,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.crazy.R
 import com.android.crazy.ui.theme.CrazyTheme
-import com.android.crazy.ui.viewmodel.CrazyProfileUIState
+import com.android.crazy.ui.viewmodel.CrazyProfileUiState
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class, ExperimentalTextApi::class)
 @Composable
 fun CrazyLoginContent(
-    uiState: CrazyProfileUIState,
+    uiState: CrazyProfileUiState,
     modifier: Modifier = Modifier,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onBackPressed: () -> Unit,
     login: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val localFocusManager = LocalFocusManager.current
+    BackHandler {
+        onBackPressed()
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        CrazyBackAppBar(onBackPressed = { onBackPressed() })
+
         Text(
             text = stringResource(id = R.string.login_title),
             style = MaterialTheme.typography.titleLarge,
@@ -100,6 +109,7 @@ fun CrazyLoginContent(
                 visualTransformation = VisualTransformation.None,
             )
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,6 +160,7 @@ fun CrazyLoginContent(
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
             )
         }
+
         val transition =
             updateTransition(targetState = uiState.error != null, label = "shake")
         val shakeOffset by transition.animateDp(
@@ -194,12 +205,12 @@ fun CrazyLoginContent(
                 containerColor = containerColor,
                 contentColor = contentColor
             ),
-
-            ) {
+        ) {
             AnimatedVisibility(visible = uiState.loading) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier
+                        .size(24.dp),
                     strokeWidth = 2.dp
                 )
             }
@@ -220,10 +231,11 @@ fun CrazyLoginContent(
 fun CrazyUserLoginPreview() {
     CrazyTheme(dynamicColor = false) {
         CrazyLoginContent(
-            uiState = CrazyProfileUIState(),
+            uiState = CrazyProfileUiState(),
             onEmailChange = {},
             onPasswordChange = {},
             login = {},
+            onBackPressed = {}
         )
     }
 }

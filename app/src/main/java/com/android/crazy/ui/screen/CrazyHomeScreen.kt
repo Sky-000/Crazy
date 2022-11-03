@@ -46,7 +46,7 @@ import com.android.crazy.ui.components.EmailDetailAppBar
 import com.android.crazy.ui.components.ReplyEmailThreadItem
 import com.android.crazy.ui.utils.CrazyContentType
 import com.android.crazy.ui.utils.CrazyNavigationType
-import com.android.crazy.ui.viewmodel.CrazyHomeUIState
+import com.android.crazy.ui.viewmodel.CrazyHomeUiState
 import com.android.crazy.ui.viewmodel.CrazyHomeViewModel
 import com.google.accompanist.adaptive.HorizontalTwoPaneStrategy
 import com.google.accompanist.adaptive.TwoPane
@@ -133,7 +133,7 @@ fun CrazyHomeScreen(
 
 @Composable
 fun CrazySinglePaneContent(
-    crazyHomeUIState: CrazyHomeUIState,
+    crazyHomeUIState: CrazyHomeUiState,
     emailLazyListState: LazyListState,
     modifier: Modifier = Modifier,
     closeDetailScreen: () -> Unit,
@@ -161,7 +161,7 @@ fun CrazySinglePaneContent(
 
 @Composable
 fun CrazyEmailList(
-    crazyHomeUIState: CrazyHomeUIState,
+    crazyHomeUIState: CrazyHomeUiState,
     emails: List<Email>,
     emailLazyListState: LazyListState,
     modifier: Modifier = Modifier,

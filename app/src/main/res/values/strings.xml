@@ -36,5 +36,6 @@
     <string name="about">About</string>
     <string name="setting">Setting</string>
     <string name="register">Register</string>
+    <string name="done">Done</string>
 
 </resources>

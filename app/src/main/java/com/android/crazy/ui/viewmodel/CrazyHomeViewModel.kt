@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import com.android.crazy.common.network.result.NetworkResult
 import com.android.crazy.common.worker.WorkerManager
 import com.android.crazy.data.model.Email
-import com.android.crazy.data.model.User
 import com.android.crazy.data.repository.EmailsRepository
 import com.android.crazy.data.repository.EmailsRepositoryImpl
 import com.android.crazy.data.repository.UserRepository
@@ -43,26 +42,25 @@ class CrazyHomeViewModel @Inject constructor(
     private val emailsRepository: EmailsRepository = EmailsRepositoryImpl()
 
     // UI state exposed to the UI
-    private val _uiState = MutableStateFlow(CrazyHomeUIState(loading = true))
-    val uiState: StateFlow<CrazyHomeUIState> = _uiState
+    private val _uiState = MutableStateFlow(CrazyHomeUiState(loading = true))
+    val uiState: StateFlow<CrazyHomeUiState> = _uiState
 
     init {
         WorkerManager.instance.createWorker()
         observeEmails()
-        //testUser()
     }
 
     private fun observeEmails() {
         viewModelScope.launch {
             emailsRepository.getAllEmails()
                 .catch { ex ->
-                    _uiState.value = CrazyHomeUIState(error = ex.message)
+                    _uiState.value = CrazyHomeUiState(error = ex.message)
                 }
                 .collect { emails ->
                     /**
                      * We set first email selected by default for first App launch in large-screens
                      */
-                    _uiState.value = CrazyHomeUIState(
+                    _uiState.value = CrazyHomeUiState(
                         emails = emails,
                         selectedEmail = emails.first()
                     )
@@ -89,25 +87,6 @@ class CrazyHomeViewModel @Inject constructor(
             )
     }
 
-    fun testUser() {
-        viewModelScope.launch {
-            userRepository.getAllUserRemote().collect {
-                when (it) {
-                    is NetworkResult.Loading -> {
-                        Logger.e(msg = "Loading")
-                    }
-                    is NetworkResult.Success -> {
-                        Logger.e(msg = "Success")
-                        it.data?.let { userList -> userRepository.insertUserBatchLocal(userList) }
-                    }
-                    is NetworkResult.Failure -> {
-                        Logger.e(msg = "Failure ${it.errorMessage}")
-                    }
-                }
-            }
-        }
-    }
-
     fun onSearchQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query)
         viewModelScope.launch {
@@ -118,10 +97,10 @@ class CrazyHomeViewModel @Inject constructor(
                             Logger.e(msg = "Loading")
                         }
                         is NetworkResult.Success -> {
-                            it.data?.let { user -> Logger.e(msg = "Success $user") }
+                            it.data.let { user -> Logger.e(msg = "Success $user") }
                         }
-                        is NetworkResult.Failure -> {
-                            Logger.e(msg = "Failure ${it.errorMessage}")
+                        is NetworkResult.Error -> {
+                            Logger.e(msg = "Failure ${it.throwable}")
                         }
                     }
                 }
@@ -131,7 +110,7 @@ class CrazyHomeViewModel @Inject constructor(
 
 }
 
-data class CrazyHomeUIState(
+data class CrazyHomeUiState(
     val emails: List<Email> = emptyList(),
     val selectedEmail: Email? = null,
     val isDetailOnlyOpen: Boolean = false,

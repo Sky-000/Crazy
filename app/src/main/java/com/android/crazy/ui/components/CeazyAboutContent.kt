@@ -1,5 +1,7 @@
 package com.android.crazy.ui.components
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,10 +19,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.crazy.R
 
+@SuppressLint("ModifierParameter")
 @Composable
 fun CrazyAboutContent(
+    onBackPressed: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    BackHandler {
+        onBackPressed()
+    }
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

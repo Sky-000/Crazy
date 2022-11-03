@@ -30,8 +30,8 @@ class UserWorker @AssistedInject constructor(
                     is NetworkResult.Success -> {
                         Logger.d("UserWorker", "doWork: ${it.data}")
                     }
-                    is NetworkResult.Failure -> {
-                        Logger.d("UserWorker", "doWork: ${it.errorMessage}")
+                    is NetworkResult.Error -> {
+                        Logger.d("UserWorker", "doWork: ${it.throwable}")
                     }
                 }
             }
